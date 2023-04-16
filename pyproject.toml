@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "fiki-backend"
+version = "0.1.0"
+description = ""
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+packages = [{include = "fiki_backend"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.95.1"
+sqlalchemy = "^2.0.9"
+alembic = "^1.10.3"
+black = "^23.3.0"
+pre-commit = "^3.2.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
