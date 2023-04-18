@@ -5,8 +5,8 @@ from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 from src.config import settings
+from src import models
 from src.db import Base
-
 from alembic import context
 
 # this is the Alembic Config object, which provides
