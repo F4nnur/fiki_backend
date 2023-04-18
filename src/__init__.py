@@ -18,6 +18,10 @@ def init_app(init_db=True):
 
     server = FastAPI(title="My FastAPI Server", lifespan=lifespan)
 
+    from .routers.user import users_router
+
+    server.include_router(users_router)
+
     return server
 
 
