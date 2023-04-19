@@ -38,14 +38,14 @@ class User(Base):
         back_populates="user",
         cascade="all, delete",
         passive_deletes=True,
-        lazy="joined",
+        lazy="selectin",
     )
     comments = relationship(
         "Comment",
         back_populates="user",
         cascade="all, delete",
         passive_deletes=True,
-        lazy="joined",
+        lazy="selectin",
     )
 
 
@@ -55,7 +55,7 @@ class Role(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String, unique=True, nullable=False, index=True)
     description = Column(String)
-    users = relationship("User", back_populates="role")
+    users = relationship("User", back_populates="role", uselist=True)
 
 
 class Summary(Base):
