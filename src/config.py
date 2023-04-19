@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     DB_NAME: str
     DB_PORT: int
     DB_URL: str
+    AUTHJWT_SECRET_KEY: str
 
     class Config:
         env_file = "./.env"
