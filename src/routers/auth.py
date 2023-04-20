@@ -49,7 +49,7 @@ async def refresh_access_token(authorize: AuthJWT = Depends()):
     authorize.jwt_refresh_token_required()
     current_user = authorize.get_jwt_subject()
     user_claims = {"user_claims": authorize.get_raw_jwt()["user_claims"]}
-    jti = authorize.get_raw_jwt()['jti']
+    jti = authorize.get_raw_jwt()["jti"]
 
     new_access_token = authorize.create_access_token(
         subject=current_user, user_claims=user_claims
@@ -58,7 +58,7 @@ async def refresh_access_token(authorize: AuthJWT = Depends()):
         subject=current_user, user_claims=user_claims
     )
 
-    await redis_conn.setex(jti, settings.REFRESH_EXPIRES, 'true')
+    await redis_conn.setex(jti, settings.REFRESH_EXPIRES, "true")
     return {"access_token": new_access_token, "refresh_token": new_refresh_token}
 
 
