@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from ..schemas.user import UserSchemaCreate, UserSchema
-from ..services.user import create, get, get_all
+from ..schemas.user import UserSchemaCreate, UserSchemaUpdate, UserSchema
+from ..services.user import create, get, get_all, update
 from ..db import get_db
 from fastapi_jwt_auth import AuthJWT
 
@@ -19,7 +19,7 @@ async def get_current_user(
     return db_user
 
 
-@users_router.get("", response_model=list[UserSchema], status_code=200)
+@users_router.get("", response_model=list[UserSchema])
 async def get_users(
     db: AsyncSession = Depends(get_db),
     limit: int | None = None,
@@ -35,3 +35,45 @@ async def create_user(user: UserSchemaCreate, db: AsyncSession = Depends(get_db)
     if not new_user:
         raise HTTPException(status_code=400, detail="User already exists")
     return new_user
+
+
+@users_router.patch("/{user_id}", response_model=UserSchema)
+async def update_user(
+    user_id: int,
+    payload: UserSchemaUpdate,
+    db: AsyncSession = Depends(get_db),
+    authorize: AuthJWT = Depends(),
+):
+    authorize.jwt_required()
+    username = authorize.get_jwt_subject()
+    user_claims = authorize.get_raw_jwt()["user_claims"]
+
+    if not user_claims["id"] == user_id:
+        raise HTTPException(status_code=405)
+
+    new_user_data: dict = payload.dict()
+    if not any(new_user_data.values()):
+        raise HTTPException(status_code=400)
+
+    existed_user = await get(db, username=username)
+
+    if not existed_user:
+        raise HTTPException(status_code=400, detail="User not found")
+
+    return await update(db, payload, existed_user)
+
+
+@users_router.delete("/{user_id}", status_code=204)
+async def delete_user(
+    user_id: int, db: AsyncSession = Depends(get_db), authorize: AuthJWT = Depends()
+):
+    authorize.jwt_required()
+    username = authorize.get_jwt_subject()
+    user_claims = authorize.get_raw_jwt()["user_claims"]
+
+    if not user_claims["id"] == user_id:
+        raise HTTPException(status_code=405)
+
+    existed_user = await get(db, username=username)
+    if not existed_user:
+        raise HTTPException(status_code=400, detail="User not found")
