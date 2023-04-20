@@ -9,6 +9,10 @@ class Settings(BaseSettings):
     DB_PORT: int
     DB_URL: str
     AUTHJWT_SECRET_KEY: str
+    AUTHJWT_DENYLIST_ENABLED: bool
+    AUTHJWT_DENYLIST_TOKEN_CHECKS: set = {"access", "refresh"}
+    ACCESS_EXPIRES: int
+    REFRESH_EXPIRES: int
 
     class Config:
         env_file = "./.env"
