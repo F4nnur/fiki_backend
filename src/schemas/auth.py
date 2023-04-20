@@ -9,3 +9,7 @@ class AuthSchemaIn(BaseModel):
 class AuthSchemaOut(BaseModel):
     access_token: str
     refresh_token: str
+
+
+class RefreshAccessToken(AuthSchemaOut):
+    pass
