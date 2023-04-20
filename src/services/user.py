@@ -25,7 +25,7 @@ async def get_with_paswd(
 
 
 async def get_all(db: AsyncSession, bound: int | None = None) -> Sequence[User]:
-    stmt = sa_select(User).limit(bound)
+    stmt = sa_select(User).limit(bound).order_by(User.id)
     return (await db.execute(stmt)).scalars().all()
 
 
@@ -38,7 +38,7 @@ async def create(db: AsyncSession, user: UserSchemaCreate) -> User | None:
     db_user = User(**payload, hashed_password=hashed_password)
     db.add(db_user)
     await db.commit()
-    await db.refresh(db_user, ["role"])
+    await db.refresh(db_user)
     return db_user
 
 
