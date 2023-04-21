@@ -69,9 +69,13 @@ class Summary(Base):
         DateTime(timezone=True), default=func.now(), onupdate=func.now()
     )
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
-    user = relationship("User", back_populates="summaries")
+    user = relationship("User", back_populates="summaries", lazy="joined")
     comments = relationship(
-        "Comment", back_populates="summary", cascade="all, delete", passive_deletes=True
+        "Comment",
+        back_populates="summary",
+        cascade="all, delete",
+        passive_deletes=True,
+        lazy="selectin",
     )
 
 
