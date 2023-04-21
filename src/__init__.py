@@ -20,11 +20,13 @@ def init_app(init_db=True):
 
     from .routers.user import users_router
     from .routers.auth import auth_router
+    from .routers.summary import summaries_router
     from .handlers import auth_jwt_exception_handler
     from fastapi_jwt_auth.exceptions import AuthJWTException
 
     server.include_router(auth_router)
     server.include_router(users_router)
+    server.include_router(summaries_router)
     server.add_exception_handler(AuthJWTException, auth_jwt_exception_handler)
 
     return server
