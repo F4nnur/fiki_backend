@@ -32,7 +32,7 @@ class SummarySchema(BaseModel):
         orm_mode = True
 
 
-from .user import UserSchema, UserSummarySchema
+from .user import UserSummarySchema
 from .comment import CommentSchema
 
 SummarySchema.update_forward_refs()
