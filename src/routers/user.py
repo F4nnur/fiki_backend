@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from ..schemas.user import UserSchemaCreate, UserSchemaUpdate, UserSchema
+from ..schemas.summary import SummarySchema
 from ..services.user import create, get_by_id, get_all, update, get_by_username, delete
 from ..db import get_db
 from fastapi_jwt_auth import AuthJWT
@@ -89,3 +90,14 @@ async def delete_user(
         raise HTTPException(status_code=400, detail="User not found")
 
     return await delete(db, existed_user)
+
+
+@users_router.get("/{user_id}/summaries", response_model=list[SummarySchema])
+async def get_user_summaries(
+    user_id: int, db: AsyncSession = Depends(get_db), authorize: AuthJWT = Depends()
+):
+    authorize.jwt_required()
+    user = await get_by_id(db, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user.summaries
