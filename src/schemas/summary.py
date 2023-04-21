@@ -21,8 +21,8 @@ class SummarySchema(BaseModel):
     description: str | None = None
     created_at: str
     updated_at: str
-    user: "UserSchema" = Field(exclude={"summaries", "comments"})
-    comments: list["CommentSchema"] | None = None
+    user: "UserSummarySchema" = Field(exclude={"summaries", "comments"})
+    comments: list["CommentSchema"] | None = Field(exclude={"__all__": {"summary"}})
 
     @validator("created_at", "updated_at", pre=True)
     def parse_dates(cls, value):
@@ -32,7 +32,7 @@ class SummarySchema(BaseModel):
         orm_mode = True
 
 
-from .user import UserSchema
+from .user import UserSchema, UserSummarySchema
 from .comment import CommentSchema
 
 SummarySchema.update_forward_refs()
