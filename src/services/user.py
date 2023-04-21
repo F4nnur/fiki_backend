@@ -3,14 +3,17 @@ from ..models import User
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select as sa_select
 from sqlalchemy import update as sa_update
-from ..schemas.user import UserSchemaCreate, UserSchemaUpdate, UserSchemaBase
-from ..schemas.auth import AuthSchemaIn
+from ..schemas.user import UserSchemaCreate, UserSchemaUpdate
 from ..security import get_password_hash, verify_password
 
 
-async def get(db: AsyncSession, username: str) -> User | None:
+async def get_by_username(db: AsyncSession, username: str) -> User | None:
     query = sa_select(User).where(User.username == username)
     return (await db.execute(query)).scalar_one_or_none()
+
+
+async def get_by_id(db: AsyncSession, user_id: int) -> User | None:
+    return await db.get(User, user_id)
 
 
 async def get_with_paswd(
@@ -30,7 +33,7 @@ async def get_all(db: AsyncSession, bound: int | None = None) -> Sequence[User]:
 
 
 async def create(db: AsyncSession, user: UserSchemaCreate) -> User | None:
-    if await get(db, user.username):
+    if await get_by_username(db, user.username):
         return None
     hashed_password = get_password_hash(user.password)
     payload = user.dict()

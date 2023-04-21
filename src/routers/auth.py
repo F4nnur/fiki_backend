@@ -5,7 +5,7 @@ from ..schemas.auth import AuthSchemaIn, AuthSchemaOut, RefreshAccessToken
 from sqlalchemy.ext.asyncio import AsyncSession
 from ..db import get_db
 from ..services.user import get_with_paswd
-from aioredis import Redis
+from redis import Redis
 
 
 auth_router = APIRouter(prefix="/auth", tags=["Authentication"])
@@ -20,8 +20,8 @@ def get_config():
 @AuthJWT.token_in_denylist_loader
 def check_if_token_in_denylist(decrypted_token: str) -> bool:
     jti = decrypted_token["jti"]
-    entry = await redis_conn.get(jti)
-    return entry and entry is True
+    entry = redis_conn.get(jti)
+    return entry and entry == "true"
 
 
 @auth_router.post("/login", response_model=AuthSchemaOut)
@@ -58,7 +58,7 @@ async def refresh_access_token(authorize: AuthJWT = Depends()):
         subject=current_user, user_claims=user_claims
     )
 
-    await redis_conn.setex(jti, settings.REFRESH_EXPIRES, "true")
+    redis_conn.setex(jti, settings.REFRESH_EXPIRES, "true")
     return {"access_token": new_access_token, "refresh_token": new_refresh_token}
 
 
@@ -66,5 +66,5 @@ async def refresh_access_token(authorize: AuthJWT = Depends()):
 async def logout(authorize: AuthJWT = Depends()):
     authorize.jwt_required()
     jti = authorize.get_raw_jwt()["jti"]
-    await redis_conn.setex(jti, settings.ACCESS_EXPIRES, "true")
+    redis_conn.setex(jti, settings.ACCESS_EXPIRES, "true")
     return {"detail": "Tokens has been revoke"}
