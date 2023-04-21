@@ -18,6 +18,26 @@ class UserSchemaUpdate(UserSchemaBase):
     password: str | None = Field(min_length=8, max_length=32)
 
 
+class UserSummarySchema(BaseModel):
+    id: int
+    username: str
+    email: EmailStr | None = None
+    fio: str | None = None
+    created_at: str
+    updated_at: str
+    role: "RoleUserSchema" = Field(exclude={"users"})
+    comments: list["CommentSchema"] | None = Field(
+        exclude={"__all__": {"user", "summary"}}
+    )
+
+    @validator("created_at", "updated_at", pre=True)
+    def parse_dates(cls, value):
+        return datetime.strftime(value, "%X %d.%m.%Y %Z")
+
+    class Config:
+        orm_mode = True
+
+
 class UserSchema(BaseModel):
     id: int
     username: str
@@ -46,3 +66,4 @@ from .summary import SummarySchema
 from .comment import CommentSchema
 
 UserSchema.update_forward_refs()
+UserSummarySchema.update_forward_refs()
