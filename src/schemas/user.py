@@ -18,7 +18,7 @@ class UserSchemaUpdate(UserSchemaBase):
     password: str | None = Field(min_length=8, max_length=32)
 
 
-class UserSummarySchema(BaseModel):
+class UserSchema(BaseModel):
     id: int
     username: str
     email: EmailStr | None = None
@@ -26,6 +26,9 @@ class UserSummarySchema(BaseModel):
     created_at: str
     updated_at: str
     role: "RoleUserSchema" = Field(exclude={"users"})
+    summaries: list["SummarySchema"] | None = Field(
+        exclude={"__all__": {"user", "comments"}}
+    )
     comments: list["CommentSchema"] | None = Field(
         exclude={"__all__": {"user", "summary"}}
     )
@@ -38,7 +41,7 @@ class UserSummarySchema(BaseModel):
         orm_mode = True
 
 
-class UserSchema(BaseModel):
+class UserSummarySchema(BaseModel):
     id: int
     username: str
     email: EmailStr | None = None
@@ -46,9 +49,6 @@ class UserSchema(BaseModel):
     created_at: str
     updated_at: str
     role: "RoleUserSchema" = Field(exclude={"users"})
-    summaries: list["SummarySchema"] | None = Field(
-        exclude={"__all__": {"user", "comments"}}
-    )
     comments: list["CommentSchema"] | None = Field(
         exclude={"__all__": {"user", "summary"}}
     )

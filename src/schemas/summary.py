@@ -32,7 +32,14 @@ class SummarySchema(BaseModel):
         orm_mode = True
 
 
+class SummaryUserSchema(SummarySchema):
+    class Config:
+        fields = {"user": {"exclude": True}}
+        orm_mode = True
+
+
 from .user import UserSummarySchema
 from .comment import CommentSchema
 
 SummarySchema.update_forward_refs()
+SummaryUserSchema.update_forward_refs()
