@@ -4,12 +4,12 @@ from fastapi_jwt_auth import AuthJWT
 from ..schemas.auth import AuthSchemaIn, AuthSchemaOut, RefreshAccessToken
 from sqlalchemy.ext.asyncio import AsyncSession
 from ..db import get_db
-from ..services.user import get_with_paswd
+from ..services.user import get_with_paswd, get_by_id
 from redis import Redis
 
 
 auth_router = APIRouter(prefix="/auth", tags=["Authentication"])
-redis_conn = Redis(decode_responses=True)
+redis_conn = Redis(decode_responses=True, password="zaropa51")
 
 
 @AuthJWT.load_config
@@ -45,17 +45,19 @@ async def login(
 
 
 @auth_router.post("/refresh", response_model=RefreshAccessToken)
-async def refresh_access_token(authorize: AuthJWT = Depends()):
+async def refresh_access_token(
+    db: AsyncSession = Depends(get_db), authorize: AuthJWT = Depends()
+):
     authorize.jwt_refresh_token_required()
-    current_user = authorize.get_jwt_subject()
     user_claims = {"user_claims": authorize.get_raw_jwt()["user_claims"]}
+    current_user = await get_by_id(db, user_claims["user_claims"]["id"])
     jti = authorize.get_raw_jwt()["jti"]
 
     new_access_token = authorize.create_access_token(
-        subject=current_user, user_claims=user_claims
+        subject=current_user.username, user_claims=user_claims
     )
     new_refresh_token = authorize.create_access_token(
-        subject=current_user, user_claims=user_claims
+        subject=current_user.username, user_claims=user_claims
     )
 
     redis_conn.setex(jti, settings.REFRESH_EXPIRES, "true")
