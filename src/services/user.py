@@ -12,7 +12,7 @@ async def get_by_username(db: AsyncSession, username: str) -> User | None:
     return (await db.execute(query)).scalar_one_or_none()
 
 
-async def get_by_id(db: AsyncSession, user_id: int) -> User | None:
+async def get_by_id(db: AsyncSession, user_id: int | str) -> User | None:
     return await db.get(User, user_id)
 
 
