@@ -13,6 +13,8 @@ class Settings(BaseSettings):
     AUTHJWT_DENYLIST_TOKEN_CHECKS: set = {"access", "refresh"}
     ACCESS_EXPIRES: int
     REFRESH_EXPIRES: int
+    REDIS_HOST: str
+    REDIS_PASSWORD: str
 
     class Config:
         env_file = "./.env"

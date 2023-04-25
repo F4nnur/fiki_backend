@@ -5,3 +5,17 @@
 - Database: ![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)
 <br/><br/>
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+___
+## How run app
+>To run the app you should follow this steps:
+ 
+1. Install [**Docker**](https://docs.docker.com/get-docker/)
+2. Go to the project directory
+3. Type in terminal `sudo docker compose up --build -d`
+
+**Great! That's works!**
+>Check [swagger of our app](http://localhost/docs)
+
+**Next times you can run `sudo docker compose up -d` to start server.**
+
+**And `sudo docker compose stop` after you've finished working.**
