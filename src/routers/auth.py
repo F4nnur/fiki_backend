@@ -9,7 +9,9 @@ from redis import Redis
 
 
 auth_router = APIRouter(prefix="/auth", tags=["Authentication"])
-redis_conn = Redis(decode_responses=True, password="zaropa51")
+redis_conn = Redis(
+    host=settings.REDIS_HOST, password=settings.REDIS_PASSWORD, decode_responses=True
+)
 
 
 @AuthJWT.load_config
