@@ -41,7 +41,7 @@ class UserSchema(BaseModel):
         orm_mode = True
 
 
-class UserSummarySchema(BaseModel):
+class UserParentSchema(BaseModel):
     id: int
     username: str
     email: EmailStr | None = None
@@ -49,9 +49,6 @@ class UserSummarySchema(BaseModel):
     created_at: str
     updated_at: str
     role: "RoleUserSchema" = Field(exclude={"users"})
-    comments: list["CommentSchema"] | None = Field(
-        exclude={"__all__": {"user", "summary"}}
-    )
 
     @validator("created_at", "updated_at", pre=True)
     def parse_dates(cls, value):
@@ -66,4 +63,4 @@ from .summary import SummarySchema
 from .comment import CommentSchema
 
 UserSchema.update_forward_refs()
-UserSummarySchema.update_forward_refs()
+UserParentSchema.update_forward_refs()
