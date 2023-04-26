@@ -21,8 +21,28 @@ class SummarySchema(BaseModel):
     description: str | None = None
     created_at: str
     updated_at: str
-    user: "UserSummarySchema" = Field(exclude={"summaries", "comments"})
+    user: "UserParentSchema" = Field(
+        exclude={"summaries", "comments", "created_at", "updated_at", "role"}
+    )
     comments: list["CommentSchema"] | None = Field(exclude={"__all__": {"summary"}})
+
+    @validator("created_at", "updated_at", pre=True)
+    def parse_dates(cls, value):
+        return datetime.strftime(value, "%X %d.%m.%Y %Z")
+
+    class Config:
+        orm_mode = True
+
+
+class SummaryParentSchema(BaseModel):
+    id: int
+    title: str
+    description: str | None = None
+    created_at: str
+    updated_at: str
+    user: "UserParentSchema" = Field(
+        exclude={"summaries", "comments", "created_at", "updated_at"}
+    )
 
     @validator("created_at", "updated_at", pre=True)
     def parse_dates(cls, value):
@@ -34,12 +54,13 @@ class SummarySchema(BaseModel):
 
 class SummaryUserSchema(SummarySchema):
     class Config:
-        fields = {"user": {"exclude": True}}
+        fields = {"user": {"exclude": True}, "comments": {"exclude": True}}
         orm_mode = True
 
 
-from .user import UserSummarySchema
+from .user import UserParentSchema
 from .comment import CommentSchema
 
 SummarySchema.update_forward_refs()
+SummaryParentSchema.update_forward_refs()
 SummaryUserSchema.update_forward_refs()
