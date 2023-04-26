@@ -39,6 +39,7 @@ class User(Base):
         cascade="all, delete",
         passive_deletes=True,
         lazy="selectin",
+        order_by="Summary.id",
     )
     comments = relationship(
         "Comment",
@@ -46,6 +47,7 @@ class User(Base):
         cascade="all, delete",
         passive_deletes=True,
         lazy="selectin",
+        order_by="Comment.id",
     )
 
 
@@ -76,6 +78,7 @@ class Summary(Base):
         cascade="all, delete",
         passive_deletes=True,
         lazy="selectin",
+        order_by="Comment.id",
     )
 
 
@@ -90,5 +93,5 @@ class Comment(Base):
     text = Column(String, nullable=False)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
     summary_id = Column(Integer, ForeignKey("summaries.id", ondelete="CASCADE"))
-    user = relationship("User", back_populates="comments")
-    summary = relationship("Summary", back_populates="comments")
+    user = relationship("User", back_populates="comments", lazy="joined")
+    summary = relationship("Summary", back_populates="comments", lazy="joined")
