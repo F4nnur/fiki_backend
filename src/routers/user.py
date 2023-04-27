@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from ..schemas.user import UserSchemaCreate, UserSchemaUpdate, UserSchema
 from ..schemas.summary import SummaryUserSchema
+from ..schemas.comment import CommentUserSchema
 from ..services.user import create, get_by_id, get_all, update, get_by_username, delete
 from ..db import get_db
 from fastapi_jwt_auth import AuthJWT
@@ -103,3 +104,14 @@ async def get_user_summaries(
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user.summaries
+
+
+@users_router.get("/{user_id}/comments", response_model=list[CommentUserSchema])
+async def get_user_comments(
+    user_id: int, db: AsyncSession = Depends(get_db), authorize: AuthJWT = Depends()
+):
+    authorize.jwt_required()
+    user = await get_by_id(db, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user.comments

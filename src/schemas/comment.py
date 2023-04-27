@@ -20,8 +20,12 @@ class CommentSchema(BaseModel):
     text: str
     created_at: str
     updated_at: str
-    user: "UserSchema" = Field(include={"id", "username", "email", "fio", "role"})
-    summary: "SummarySchema" = Field(exclude={"user", "comments"})
+    user: "UserParentSchema" = Field(
+        exclude={"summaries", "comments", "created_at", "updated_at", "role"}
+    )
+    summary: "SummaryParentSchema" = Field(
+        exclude={"user", "comments", "created_at", "updated_at"}
+    )
 
     @validator("created_at", "updated_at", pre=True)
     def parse_dates(cls, value):
@@ -31,7 +35,14 @@ class CommentSchema(BaseModel):
         orm_mode = True
 
 
-from .user import UserSchema
-from .summary import SummarySchema
+class CommentUserSchema(CommentSchema):
+    class Config:
+        fields = {"user": {"exclude": True}}
+        orm_mode = True
+
+
+from .user import UserParentSchema
+from .summary import SummaryParentSchema
 
 CommentSchema.update_forward_refs()
+CommentUserSchema.update_forward_refs()
