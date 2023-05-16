@@ -11,5 +11,5 @@ class AuthSchemaOut(BaseModel):
     refresh_token: str
 
 
-class RefreshAccessToken(AuthSchemaOut):
-    pass
+class RefreshAccessToken(BaseModel):
+    access_token: str
