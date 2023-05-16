@@ -56,12 +56,9 @@ async def create_tables(connection_test):
     async with session_manager.connect() as connection:
         await session_manager.drop_all(connection)
         await session_manager.create_all(connection)
-        roles = [
-            {"id": uuid4(), "name": role.name, "description": role.value}
-            for role in RoleEnum
-        ]
+        roles = [{"name": role.name, "description": role.value} for role in RoleEnum]
         stmt = text(
-            """INSERT INTO roles(id, name, description) VALUES(:id, :name, :description)"""
+            """INSERT INTO roles(name, description) VALUES(:name, :description)"""
         )
         for role in roles:
             await connection.execute(stmt, role)
