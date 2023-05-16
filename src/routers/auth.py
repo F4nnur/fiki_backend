@@ -68,4 +68,4 @@ async def logout(authorize: AuthJWT = Depends()):
     authorize.jwt_required()
     jti = authorize.get_raw_jwt()["jti"]
     redis_conn.setex(jti, settings.ACCESS_EXPIRES, "true")
-    return {"detail": "Tokens has been revoke"}
+    return {"detail": "Tokens has been revoked"}
