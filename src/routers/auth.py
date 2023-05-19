@@ -5,13 +5,11 @@ from ..schemas.auth import AuthSchemaIn, AuthSchemaOut, RefreshAccessToken
 from sqlalchemy.ext.asyncio import AsyncSession
 from ..db import get_db
 from ..services.user import get_with_paswd, get_by_id
-from redis import Redis
+from ..redis import RedisClient
 
 
 auth_router = APIRouter(prefix="/auth", tags=["Authentication"])
-redis_conn = Redis(
-    host=settings.REDIS_HOST, password=settings.REDIS_PASSWORD, decode_responses=True
-)
+redis_conn = RedisClient().conn
 
 
 @AuthJWT.load_config
@@ -58,17 +56,14 @@ async def refresh_access_token(
     new_access_token = authorize.create_access_token(
         subject=current_user.username, user_claims=user_claims
     )
-    new_refresh_token = authorize.create_access_token(
-        subject=current_user.username, user_claims=user_claims
-    )
 
-    redis_conn.setex(jti, settings.REFRESH_EXPIRES, "true")
-    return {"access_token": new_access_token, "refresh_token": new_refresh_token}
+    redis_conn.setex(jti, settings.AUTHJWT_REFRESH_TOKEN_EXPIRES, "true")
+    return {"access_token": new_access_token}
 
 
 @auth_router.delete("/logout")
 async def logout(authorize: AuthJWT = Depends()):
     authorize.jwt_required()
     jti = authorize.get_raw_jwt()["jti"]
-    redis_conn.setex(jti, settings.ACCESS_EXPIRES, "true")
-    return {"detail": "Tokens has been revoke"}
+    redis_conn.setex(jti, settings.AUTHJWT_ACCESS_TOKEN_EXPIRES, "true")
+    return {"detail": "Tokens has been revoked"}
