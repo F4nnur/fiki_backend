@@ -12,4 +12,4 @@ RUN pip install --no-cache-dir --upgrade -r /fiki/requirements.txt
 COPY ./src /fiki/src
 COPY ./alembic.ini /fiki/alembic.ini
 COPY ./alembic /fiki/alembic
-CMD ["uvicorn", "src:server", "--host", "0.0.0.0", "--port", "80"]
+CMD ["uvicorn", "src:init_app", "--host", "0.0.0.0", "--port", "80"]
