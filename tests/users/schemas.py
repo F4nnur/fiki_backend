@@ -8,7 +8,7 @@ user = {
     "fio": Or(None, str),
     "created_at": str,
     "updated_at": str,
-    "role": {"id": int, "name": str, "description": str},
+    "role": {"name": str, "description": str},
     "summaries": [
         {
             "id": int,
