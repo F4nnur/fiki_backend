@@ -2,7 +2,6 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from src.config import settings
 from src.db import session_manager
-from .redis import RedisClient
 
 
 def init_app(init_db=True):
@@ -10,7 +9,6 @@ def init_app(init_db=True):
 
     if init_db:
         session_manager.init(settings.DB_URL)
-        RedisClient(settings.REDIS_HOST, settings.REDIS_PASSWORD)
 
         @asynccontextmanager
         async def lifespan(app: FastAPI):
@@ -46,3 +44,6 @@ def init_app(init_db=True):
     )
 
     return server
+
+
+server = init_app()

@@ -27,7 +27,7 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_index(op.f("ix_roles_name"), "roles", ["name"], unique=True)
-    roles = [{"name": role.name, "description": role.value} for role in RoleEnum]
+    roles = [{"name": RoleEnum.user, "description": RoleEnum.user_desc}]
     op.bulk_insert(roles_table, roles)
     op.create_table(
         "users",
