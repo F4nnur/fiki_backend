@@ -25,7 +25,7 @@ class UserSchema(BaseModel):
     fio: str | None = None
     created_at: str
     updated_at: str
-    role: "RoleUserSchema" = Field(exclude={"id", "users"})
+    role: "RoleUserSchema" = Field(exclude={"users"})
     summaries: list["SummarySchema"] | None = Field(
         exclude={"__all__": {"user", "comments"}}
     )
