@@ -11,8 +11,11 @@ summaries_router = APIRouter(prefix="/summaries", tags=["Summaries"])
 
 @summaries_router.post("", response_model=SummarySchema, status_code=201)
 async def create_summary(
-    summary: SummarySchemaCreate, db: AsyncSession = Depends(get_db)
+    summary: SummarySchemaCreate,
+    db: AsyncSession = Depends(get_db),
+    authorize: AuthJWT = Depends(),
 ):
+    authorize.jwt_required()
     result = await create(db, summary)
     if not result:
         raise HTTPException(status_code=400, detail=f"User not found")
